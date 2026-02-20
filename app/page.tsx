@@ -1,8 +1,10 @@
 export default function Home() {
   return (
-    <main>
-      <h1>WeFund Dashboard SI</h1>
-      <p>Dashboard en cours de développement...</p>
-    </main>
+    <div>
+      <section>
+        <h2>Indicateurs de performance</h2>
+        <p>Sélectionnez un indicateur pour visualiser les données</p>
+      </section>
+    </div>
   )
 }
