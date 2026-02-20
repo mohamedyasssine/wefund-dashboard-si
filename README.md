@@ -27,37 +27,25 @@ Cette application fournit des graphiques de suivi à la DSI pour analyser les pe
 
 ## Pourquoi Next.js ?
 
-Next.js a été choisi plutôt que React pur pour plusieurs raisons stratégiques :
+Next.js a été choisi plutôt que React pur pour les raisons suivantes :
 
-### 🚀 Déploiement simplifié
-- Le cahier des charges exige une URL déployée pour la recette du client
-- Next.js se déploie facilement sur Render.com (offre free) ou Vercel sans configuration complexe
-- Optimisé pour la production dès le départ
+### Déploiement simplifié
+Le cahier des charges exige une URL déployée pour la recette du client. Next.js se déploie facilement sur Render.com (offre free) ou Vercel sans configuration complexe. Le framework est optimisé pour la production dès le départ.
 
-### 🗺️ Routing intégré
-- App Router moderne et intuitif pour organiser les pages du dashboard
-- Pas besoin d'installer React Router séparément
-- Structure de fichiers claire et standardisée
+### Routing intégré
+L'App Router permet d'organiser les pages du dashboard de manière claire. Pas besoin d'installer React Router séparément, la structure de fichiers est standardisée.
 
-### ⚡ Performance optimale
-- Optimisations automatiques (code splitting, lazy loading)
-- Important pour un dashboard avec plusieurs graphiques simultanés
-- Meilleure expérience utilisateur avec des chargements rapides
+### Performance
+Next.js propose des optimisations automatiques (code splitting, lazy loading) qui sont importantes pour un dashboard avec plusieurs graphiques simultanés. Cela améliore l'expérience utilisateur avec des chargements plus rapides.
 
-### 🔌 Évolutivité
-- API Routes intégrées pour connecter facilement les microservices plus tard
-- Architecture prête pour intégrer les services de gestion de projets et contributions
-- Support natif du SSR/SSG si nécessaire
+### Évolutivité
+Les API Routes intégrées permettront de connecter facilement les microservices plus tard. L'architecture est prête pour intégrer les services de gestion de projets et contributions. Le support natif du SSR/SSG est disponible si nécessaire.
 
-### 📦 Configuration minimale
-- Support TypeScript natif et optimisé
-- Moins de configuration manuelle nécessaire
-- Focus sur le développement plutôt que sur la configuration
+### Configuration minimale
+Le support TypeScript est natif et optimisé. Moins de configuration manuelle est nécessaire, ce qui permet de se concentrer sur le développement.
 
-### 🎯 Alignement avec le cahier des charges
-- Le cahier des charges mentionne la possibilité d'utiliser NextJS
-- Framework moderne et largement adopté dans l'écosystème React
-- Meilleure maintenabilité à long terme
+### Alignement avec le cahier des charges
+Le cahier des charges mentionne la possibilité d'utiliser NextJS. C'est un framework moderne et largement adopté dans l'écosystème React, ce qui garantit une meilleure maintenabilité à long terme.
 
 ## Installation
 
@@ -85,7 +73,7 @@ npm start
 ```
 wefund-dashboard-si/
 ├── app/                    # Pages Next.js (App Router)
-├── components/             # Composants React réutilisables
+├── components/             # Composants Next.js réutilisables
 ├── lib/                    # Utilitaires et services
 ├── types/                  # Définitions TypeScript
 └── public/                 # Assets statiques

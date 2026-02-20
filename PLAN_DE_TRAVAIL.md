@@ -14,11 +14,20 @@ Ce document décrit le plan de développement du dashboard, découpé en plusieu
 - [x] Structure de base (app/, layout, page)
 - [x] Documentation README et KPI.md
 
-### Commit 2: Structure de base et layout
-- Structure des dossiers (components/, lib/, types/)
+### Commit 2a: Structure des dossiers et types TypeScript
+- Création de la structure des dossiers (components/, lib/, types/)
+- Types TypeScript de base pour les données (Campaign, Contribution, etc.)
+- Types pour les KPI et les périodes
+
+### Commit 2b: Layout principal et composant Header
 - Layout principal du dashboard
-- Composant Header/Navigation
-- Styles de base et thème
+- Composant Header avec titre et navigation
+- Structure de base de la page principale
+
+### Commit 2c: Styles de base et système de design
+- Styles globaux améliorés
+- Variables CSS pour les couleurs et espacements
+- Système de design cohérent
 
 ### Commit 3: Service de données mockées
 - Types TypeScript pour les données
