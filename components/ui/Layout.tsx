@@ -2,7 +2,7 @@ import Header from './Header'
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div>
+    <div className="layout">
       <Header />
       <main>{children}</main>
     </div>

@@ -1,9 +1,9 @@
 export default function Header() {
   return (
-    <header>
-      <div>
-        <h1>WeFund Dashboard SI</h1>
-        <p>Tableau de bord de suivi</p>
+    <header className="header">
+      <div className="header__inner">
+        <h1 className="header__title">WeFund Dashboard SI</h1>
+        <p className="header__subtitle">Tableau de bord de suivi</p>
       </div>
     </header>
   )

@@ -47,22 +47,23 @@ Le support TypeScript est natif et optimisé. Moins de configuration manuelle es
 ### Alignement avec le cahier des charges
 Le cahier des charges mentionne la possibilité d'utiliser NextJS. C'est un framework moderne et largement adopté dans l'écosystème React, ce qui garantit une meilleure maintenabilité à long terme.
 
-## Installation
+## Exécution du projet
 
+**Prérequis :** Node.js 24+ ([nodejs.org](https://nodejs.org))
+
+1. À la racine du projet, installer les dépendances :
 ```bash
 npm install
 ```
 
-## Développement
-
+2. Lancer l’application en mode développement :
 ```bash
 npm run dev
 ```
 
-L'application sera accessible sur [http://localhost:3000](http://localhost:3000)
+3. Ouvrir dans le navigateur : [http://localhost:3000](http://localhost:3000)
 
-## Build
-
+Build de production :
 ```bash
 npm run build
 npm start
