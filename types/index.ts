@@ -122,3 +122,5 @@ export interface KpiMetadata {
   chartType: 'line' | 'bar' | 'pie' | 'number' | 'area'
   periodRequired: boolean
 }
+
+export * from './kpi'
