@@ -49,25 +49,32 @@ Le cahier des charges mentionne la possibilité d'utiliser NextJS. C'est un fram
 
 ## Exécution du projet
 
-**Prérequis :** Node.js 24+ ([nodejs.org](https://nodejs.org))
+**Prérequis :** Node.js en version 24 ou supérieure ([télécharger sur nodejs.org](https://nodejs.org))
 
-1. À la racine du projet, installer les dépendances :
-```bash
-npm install
-```
+**Lancer le projet en local :**
 
-2. Lancer l’application en mode développement :
-```bash
-npm run dev
-```
+1. Ouvrir un terminal dans le dossier du projet (par exemple `wefund-dashboard-si`).
 
-3. Ouvrir dans le navigateur : [http://localhost:3000](http://localhost:3000)
+2. Installer les dépendances (à faire une fois après un clone) :
+   ```bash
+   npm install
+   ```
 
-Build de production :
+3. Démarrer le serveur de développement :
+   ```bash
+   npm run dev
+   ```
+
+4. Ouvrir l’application dans le navigateur à l’adresse : **http://localhost:3000**
+
+L’application se recharge automatiquement lorsque vous modifiez le code.
+
+**Build pour la production :**
 ```bash
 npm run build
 npm start
 ```
+Puis ouvrir http://localhost:3000 (le port peut varier selon la config).
 
 ## Structure du projet
 
