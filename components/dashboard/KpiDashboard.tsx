@@ -8,6 +8,7 @@ import {
   fetchKpiMetadata,
   KPI_METADATA,
 } from '@/lib/data/mock'
+import KpiSelector from '@/components/dashboard/KpiSelector'
 import KpiCard from '@/components/ui/KpiCard'
 import PeriodSelector from '@/components/ui/PeriodSelector'
 import LineKpiChart from '@/components/ui/LineKpiChart'
@@ -98,6 +99,17 @@ export default function KpiDashboard() {
   )
   const chartConfig = getChartConfig(viewState.selectedKpiId)
 
+  const handleKpiSelect = (nextId: KpiId) => {
+    setViewState((current) =>
+      current.selectedKpiId === nextId
+        ? current
+        : {
+            ...current,
+            selectedKpiId: nextId,
+          },
+    )
+  }
+
   const renderChart = () => {
     if (dataState.status !== 'loaded') {
       return (
@@ -185,6 +197,12 @@ export default function KpiDashboard() {
 
       <div className="kpi-dashboard__content">
         <div className="kpi-dashboard__summary">
+          <KpiSelector
+            kpis={KPI_METADATA}
+            selectedId={viewState.selectedKpiId}
+            onSelect={handleKpiSelect}
+          />
+
           <KpiCard
             title={selectedMetadata?.title ?? 'Indicateur'}
             value={
