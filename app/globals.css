@@ -144,6 +144,27 @@ body {
   color: var(--color-text-muted);
 }
 
+/* Conteneur générique pour les graphiques KPI */
+.kpi-chart {
+  background-color: var(--color-bg-card);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-border);
+  padding: var(--space-5);
+  box-shadow: var(--shadow-sm);
+}
+
+.kpi-chart--empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.kpi-chart__empty-message {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
 /* Cartes KPI */
 .kpi-card {
   background-color: var(--color-bg-card);
