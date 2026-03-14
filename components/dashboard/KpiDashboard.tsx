@@ -2,8 +2,18 @@
 
 import { useEffect, useState } from 'react'
 import type { KpiId, Period } from '@/types'
-import type { KpiChartConfig, KpiData } from '@/types/kpi'
+import type {
+  KpiChartConfig,
+  KpiDashboardDataState,
+  KpiData,
+} from '@/types/kpi'
+import { isLoaded } from '@/types/kpi'
 import { fetchKpiData, KPI_METADATA } from '@/lib/data/mock'
+import {
+  AVAILABLE_PERIODS,
+  DEFAULT_KPI_ID,
+  DEFAULT_PERIOD,
+} from '@/lib/constants/dashboard'
 import KpiSelector from '@/components/dashboard/KpiSelector'
 import KpiCard from '@/components/ui/KpiCard'
 import PeriodSelector from '@/components/ui/PeriodSelector'
@@ -11,19 +21,10 @@ import LineKpiChart from '@/components/ui/LineKpiChart'
 import BarKpiChart from '@/components/ui/BarKpiChart'
 import PieKpiChart from '@/components/ui/PieKpiChart'
 
-const DEFAULT_KPI_ID: KpiId = 'active-campaigns'
-const DEFAULT_PERIOD: Period = 'month'
-
 type KpiDashboardState = {
   selectedKpiId: KpiId
   period: Period
 }
-
-type KpiDashboardDataState =
-  | { status: 'idle' }
-  | { status: 'loading' }
-  | { status: 'loaded'; data: KpiData }
-  | { status: 'error'; message: string }
 
 const DEFAULT_CHART_CONFIG: KpiChartConfig = {
   title: 'Indicateur',
@@ -72,8 +73,11 @@ export default function KpiDashboard() {
 
         setDataState({
           status: 'error',
-          message:
-            "Impossible de charger les données pour l'indicateur sélectionné.",
+          error: {
+            message:
+              "Impossible de charger les données pour l'indicateur sélectionné.",
+            code: 'UNKNOWN',
+          },
         })
       })
 
@@ -128,14 +132,14 @@ export default function KpiDashboard() {
   }
 
   const renderChart = () => {
-    if (dataState.status !== 'loaded') {
+    if (!isLoaded(dataState)) {
       return (
         <div className="kpi-dashboard__chart-placeholder">
           <p className="kpi-dashboard__chart-placeholder-text">
             {dataState.status === 'loading'
               ? 'Chargement des données...'
               : dataState.status === 'error'
-                ? dataState.message
+                ? dataState.error.message
                 : 'Sélectionnez un indicateur pour afficher le graphique.'}
           </p>
         </div>
@@ -218,7 +222,7 @@ export default function KpiDashboard() {
           value={viewState.period}
           onChange={handlePeriodChange}
           aria-label="Sélection de la période"
-          availablePeriods={['week', 'month', 'quarter', 'year', 'all']}
+          availablePeriods={[...AVAILABLE_PERIODS]}
         />
       </header>
 
@@ -233,7 +237,7 @@ export default function KpiDashboard() {
           <KpiCard
             title={selectedMetadata?.title ?? 'Indicateur'}
             value={
-              dataState.status === 'loaded' && dataState.data.value != null
+              isLoaded(dataState) && dataState.data.value != null
                 ? formatValue(dataState.data.value, selectedMetadata?.unit)
                 : '—'
             }
