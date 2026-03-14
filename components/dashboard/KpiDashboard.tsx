@@ -3,11 +3,7 @@
 import { useEffect, useState } from 'react'
 import type { KpiId, Period } from '@/types'
 import type { KpiChartConfig, KpiData } from '@/types/kpi'
-import {
-  fetchKpiData,
-  fetchKpiMetadata,
-  KPI_METADATA,
-} from '@/lib/data/mock'
+import { fetchKpiData, KPI_METADATA } from '@/lib/data/mock'
 import KpiSelector from '@/components/dashboard/KpiSelector'
 import KpiCard from '@/components/ui/KpiCard'
 import PeriodSelector from '@/components/ui/PeriodSelector'
@@ -110,6 +106,27 @@ export default function KpiDashboard() {
     )
   }
 
+  const formatValue = (value: number, unit?: string) => {
+    if (unit === '€') {
+      return new Intl.NumberFormat('fr-FR', {
+        style: 'currency',
+        currency: 'EUR',
+        maximumFractionDigits: 0,
+      }).format(value)
+    }
+
+    if (unit === '%') {
+      return new Intl.NumberFormat('fr-FR', {
+        style: 'percent',
+        maximumFractionDigits: 1,
+      }).format(value / 100)
+    }
+
+    return new Intl.NumberFormat('fr-FR', {
+      maximumFractionDigits: 1,
+    }).format(value)
+  }
+
   const renderChart = () => {
     if (dataState.status !== 'loaded') {
       return (
@@ -131,11 +148,21 @@ export default function KpiDashboard() {
       return null
     }
 
+    if (selectedMetadata.chartType === 'number') {
+      return (
+        <div className="kpi-dashboard__chart-placeholder">
+          <p className="kpi-dashboard__chart-placeholder-text">
+            Cet indicateur est affiché sous forme de valeur (pas de graphique).
+          </p>
+        </div>
+      )
+    }
+
     if (!data.timeSeries || data.timeSeries.length === 0) {
       return (
         <div className="kpi-dashboard__chart-placeholder">
           <p className="kpi-dashboard__chart-placeholder-text">
-            Aucune donnée temporelle disponible pour cet indicateur.
+            Aucune donnée disponible sur la période sélectionnée.
           </p>
         </div>
       )
@@ -207,9 +234,7 @@ export default function KpiDashboard() {
             title={selectedMetadata?.title ?? 'Indicateur'}
             value={
               dataState.status === 'loaded' && dataState.data.value != null
-                ? dataState.data.value.toLocaleString('fr-FR', {
-                    maximumFractionDigits: 1,
-                  })
+                ? formatValue(dataState.data.value, selectedMetadata?.unit)
                 : '—'
             }
             subtitle={selectedMetadata?.description}

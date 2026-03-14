@@ -12,33 +12,28 @@ export default function KpiSelector({
   onSelect,
 }: KpiSelectorProps) {
   return (
-    <nav
-      className="kpi-selector"
-      aria-label="Sélection d'indicateurs de performance"
-    >
-      {kpis.map((kpi) => {
-        const isActive = kpi.id === selectedId
+    <div className="kpi-selector">
+      <label className="kpi-selector__label" htmlFor="kpi-selector">
+        Indicateur
+      </label>
+      <select
+        id="kpi-selector"
+        className="kpi-selector__select"
+        value={selectedId}
+        onChange={(e) => onSelect(e.target.value as KpiId)}
+        aria-label="Sélection d'indicateur de performance"
+      >
+        {kpis.map((kpi) => (
+          <option key={kpi.id} value={kpi.id}>
+            {kpi.title}
+          </option>
+        ))}
+      </select>
 
-        return (
-          <button
-            key={kpi.id}
-            type="button"
-            className={
-              isActive
-                ? 'kpi-selector__item kpi-selector__item--active'
-                : 'kpi-selector__item'
-            }
-            onClick={() => onSelect(kpi.id)}
-            aria-pressed={isActive}
-          >
-            <span className="kpi-selector__title">{kpi.title}</span>
-            <span className="kpi-selector__description">
-              {kpi.description}
-            </span>
-          </button>
-        )
-      })}
-    </nav>
+      <p className="kpi-selector__hint">
+        {kpis.find((kpi) => kpi.id === selectedId)?.description}
+      </p>
+    </div>
   )
 }
 

@@ -13,29 +13,28 @@ export function getPeriodStartDate(period: Period): Date {
 
   switch (period) {
     case 'day':
-      start.setHours(0, 0, 0, 0)
+      // Fenêtre glissante : dernières 24h
+      start.setDate(now.getDate() - 1)
       return start
 
     case 'week':
-      const dayOfWeek = now.getDay()
-      start.setDate(now.getDate() - dayOfWeek)
-      start.setHours(0, 0, 0, 0)
+      // Fenêtre glissante : 7 derniers jours
+      start.setDate(now.getDate() - 7)
       return start
 
     case 'month':
-      start.setDate(1)
-      start.setHours(0, 0, 0, 0)
+      // Fenêtre glissante : ~30 derniers jours
+      start.setDate(now.getDate() - 30)
       return start
 
     case 'quarter':
-      const quarter = Math.floor(now.getMonth() / 3)
-      start.setMonth(quarter * 3, 1)
-      start.setHours(0, 0, 0, 0)
+      // Fenêtre glissante : ~90 derniers jours
+      start.setDate(now.getDate() - 90)
       return start
 
     case 'year':
-      start.setMonth(0, 1)
-      start.setHours(0, 0, 0, 0)
+      // Fenêtre glissante : ~365 derniers jours
+      start.setDate(now.getDate() - 365)
       return start
 
     case 'all':
