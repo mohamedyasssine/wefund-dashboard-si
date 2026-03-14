@@ -192,6 +192,11 @@ body {
   text-align: center;
 }
 
+.kpi-dashboard__loading {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
 /* Sélecteur de KPI */
 .kpi-selector {
   display: flex;

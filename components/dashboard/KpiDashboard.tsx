@@ -1,14 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { KpiId, Period } from '@/types'
+import type { KpiId, KpiMetadata, Period } from '@/types'
 import type {
   KpiChartConfig,
   KpiDashboardDataState,
   KpiData,
 } from '@/types/kpi'
 import { isLoaded } from '@/types/kpi'
-import { fetchKpiData, KPI_METADATA } from '@/lib/data/mock'
+import { useKpiDataService } from '@/context/KpiDataServiceContext'
 import {
   AVAILABLE_PERIODS,
   DEFAULT_KPI_ID,
@@ -31,8 +31,8 @@ const DEFAULT_CHART_CONFIG: KpiChartConfig = {
   showGrid: true,
 }
 
-function getChartConfig(kpiId: KpiId): KpiChartConfig {
-  const metadata = KPI_METADATA.find((meta) => meta.id === kpiId)
+function getChartConfig(kpiId: KpiId, metadataList: KpiMetadata[]): KpiChartConfig {
+  const metadata = metadataList.find((meta) => meta.id === kpiId)
 
   if (!metadata) {
     return DEFAULT_CHART_CONFIG
@@ -46,6 +46,9 @@ function getChartConfig(kpiId: KpiId): KpiChartConfig {
 }
 
 export default function KpiDashboard() {
+  const service = useKpiDataService()
+
+  const [metadata, setMetadata] = useState<KpiMetadata[] | null>(null)
   const [viewState, setViewState] = useState<KpiDashboardState>({
     selectedKpiId: DEFAULT_KPI_ID,
     period: DEFAULT_PERIOD,
@@ -57,12 +60,23 @@ export default function KpiDashboard() {
 
   useEffect(() => {
     let cancelled = false
+    service.getKpiMetadata().then((list) => {
+      if (!cancelled) setMetadata(list)
+    })
+    return () => {
+      cancelled = true
+    }
+  }, [service])
+
+  useEffect(() => {
+    let cancelled = false
 
     const { selectedKpiId, period } = viewState
 
     setDataState({ status: 'loading' })
 
-    fetchKpiData(selectedKpiId, period)
+    service
+      .getKpiData(selectedKpiId, period)
       .then((data) => {
         if (cancelled) return
 
@@ -84,7 +98,7 @@ export default function KpiDashboard() {
     return () => {
       cancelled = true
     }
-  }, [viewState])
+  }, [viewState, service])
 
   const handlePeriodChange = (nextPeriod: Period) => {
     setViewState((current) =>
@@ -94,10 +108,13 @@ export default function KpiDashboard() {
     )
   }
 
-  const selectedMetadata = KPI_METADATA.find(
+  const selectedMetadata = metadata?.find(
     (meta) => meta.id === viewState.selectedKpiId,
   )
-  const chartConfig = getChartConfig(viewState.selectedKpiId)
+  const chartConfig = getChartConfig(
+    viewState.selectedKpiId,
+    metadata ?? [],
+  )
 
   const handleKpiSelect = (nextId: KpiId) => {
     setViewState((current) =>
@@ -228,11 +245,17 @@ export default function KpiDashboard() {
 
       <div className="kpi-dashboard__content">
         <div className="kpi-dashboard__summary">
-          <KpiSelector
-            kpis={KPI_METADATA}
-            selectedId={viewState.selectedKpiId}
-            onSelect={handleKpiSelect}
-          />
+          {metadata ? (
+            <KpiSelector
+              kpis={metadata}
+              selectedId={viewState.selectedKpiId}
+              onSelect={handleKpiSelect}
+            />
+          ) : (
+            <p className="kpi-dashboard__loading">
+              Chargement des indicateurs…
+            </p>
+          )}
 
           <KpiCard
             title={selectedMetadata?.title ?? 'Indicateur'}

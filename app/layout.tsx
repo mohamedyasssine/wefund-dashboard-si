@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import Layout from '@/components/ui/Layout'
+import { KpiDataServiceProvider } from '@/context/KpiDataServiceContext'
 import './globals.css'
 
 export const metadata: Metadata = {
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <body>
-        <Layout>{children}</Layout>
+        <KpiDataServiceProvider>
+          <Layout>{children}</Layout>
+        </KpiDataServiceProvider>
       </body>
     </html>
   )
