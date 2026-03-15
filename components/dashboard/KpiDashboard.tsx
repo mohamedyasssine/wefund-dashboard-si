@@ -153,15 +153,27 @@ export default function KpiDashboard() {
   }
 
   const renderChart = () => {
+    if (dataState.status === 'error') {
+      return (
+        <div className="kpi-dashboard__error" role="alert">
+          <p className="kpi-dashboard__error-icon" aria-hidden="true">⚠️</p>
+          <p className="kpi-dashboard__error-message">
+            {dataState.error.message}
+          </p>
+          <p className="kpi-dashboard__error-code">
+            Code : {dataState.error.code}
+          </p>
+        </div>
+      )
+    }
+
     if (!isLoaded(dataState)) {
       return (
         <div className="kpi-dashboard__chart-placeholder">
           <p className="kpi-dashboard__chart-placeholder-text">
             {dataState.status === 'loading'
               ? 'Chargement des données...'
-              : dataState.status === 'error'
-                ? dataState.error.message
-                : 'Sélectionnez un indicateur pour afficher le graphique.'}
+              : 'Sélectionnez un indicateur pour afficher le graphique.'}
           </p>
         </div>
       )
@@ -249,7 +261,16 @@ export default function KpiDashboard() {
 
       <div className="kpi-dashboard__content">
         <div className="kpi-dashboard__summary">
-          {metadata ? (
+          {metadataError ? (
+            <div className="kpi-dashboard__error kpi-dashboard__error--inline" role="alert">
+              <p className="kpi-dashboard__error-message">
+                {metadataError.message}
+              </p>
+              <p className="kpi-dashboard__error-code">
+                Code : {metadataError.code}
+              </p>
+            </div>
+          ) : metadata ? (
             <KpiSelector
               kpis={metadata}
               selectedId={viewState.selectedKpiId}
