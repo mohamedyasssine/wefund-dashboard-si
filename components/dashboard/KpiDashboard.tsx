@@ -7,7 +7,8 @@ import type {
   KpiDashboardDataState,
   KpiData,
 } from '@/types/kpi'
-import { isLoaded } from '@/types/kpi'
+import { isLoaded, toKpiLoadError } from '@/types/kpi'
+import type { KpiLoadError } from '@/types/kpi'
 import { useKpiDataService } from '@/context/KpiDataServiceContext'
 import {
   AVAILABLE_PERIODS,
@@ -49,6 +50,7 @@ export default function KpiDashboard() {
   const service = useKpiDataService()
 
   const [metadata, setMetadata] = useState<KpiMetadata[] | null>(null)
+  const [metadataError, setMetadataError] = useState<KpiLoadError | null>(null)
   const [viewState, setViewState] = useState<KpiDashboardState>({
     selectedKpiId: DEFAULT_KPI_ID,
     period: DEFAULT_PERIOD,
@@ -60,9 +62,15 @@ export default function KpiDashboard() {
 
   useEffect(() => {
     let cancelled = false
-    service.getKpiMetadata().then((list) => {
-      if (!cancelled) setMetadata(list)
-    })
+    setMetadataError(null)
+    service
+      .getKpiMetadata()
+      .then((list) => {
+        if (!cancelled) setMetadata(list)
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) setMetadataError(toKpiLoadError(err))
+      })
     return () => {
       cancelled = true
     }
@@ -82,16 +90,12 @@ export default function KpiDashboard() {
 
         setDataState({ status: 'loaded', data })
       })
-      .catch(() => {
+      .catch((err: unknown) => {
         if (cancelled) return
 
         setDataState({
           status: 'error',
-          error: {
-            message:
-              "Impossible de charger les données pour l'indicateur sélectionné.",
-            code: 'UNKNOWN',
-          },
+          error: toKpiLoadError(err),
         })
       })
 

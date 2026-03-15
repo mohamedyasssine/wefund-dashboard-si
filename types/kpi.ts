@@ -34,11 +34,38 @@ export interface KpiChartConfig {
  * -------------------------------------------------------------------------- */
 
 /**
- * Erreur typée pour le chargement des données KPI (évite string seule)
+ * Codes d'erreur explicites pour le chargement des données KPI.
+ * Chaque code correspond à une cause identifiable (pas de string arbitraire).
+ */
+export type KpiErrorCode = 'NETWORK' | 'TIMEOUT' | 'NOT_FOUND' | 'UNKNOWN'
+
+/**
+ * Erreur typée pour le chargement des données KPI (évite string seule).
+ * Modélise l'erreur comme une donnée à part entière (TypeDD).
  */
 export interface KpiLoadError {
   message: string
-  code?: 'NETWORK' | 'UNKNOWN'
+  code: KpiErrorCode
+}
+
+/**
+ * Convertit une erreur inconnue (catch) en KpiLoadError typée.
+ * Évite les catch silencieux et produit toujours un message exploitable.
+ */
+export function toKpiLoadError(error: unknown): KpiLoadError {
+  if (error instanceof TypeError && error.message.includes('fetch')) {
+    return { message: 'Erreur réseau : impossible de contacter le serveur.', code: 'NETWORK' }
+  }
+
+  if (error instanceof DOMException && error.name === 'AbortError') {
+    return { message: 'La requête a expiré. Veuillez réessayer.', code: 'TIMEOUT' }
+  }
+
+  if (error instanceof Error) {
+    return { message: error.message, code: 'UNKNOWN' }
+  }
+
+  return { message: 'Une erreur inattendue est survenue.', code: 'UNKNOWN' }
 }
 
 /**
