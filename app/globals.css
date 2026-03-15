@@ -232,6 +232,28 @@ body {
   color: #b91c1c;
 }
 
+.kpi-dashboard__retry-button {
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid #fca5a5;
+  border-radius: var(--radius-lg);
+  background-color: #ffffff;
+  color: #991b1b;
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  cursor: pointer;
+  transition: background-color 150ms ease-out, border-color 150ms ease-out;
+}
+
+.kpi-dashboard__retry-button:hover {
+  background-color: #fee2e2;
+  border-color: #f87171;
+}
+
+.kpi-dashboard__retry-button:focus-visible {
+  outline: 2px solid #dc2626;
+  outline-offset: 2px;
+}
+
 /* Sélecteur de KPI */
 .kpi-selector {
   display: flex;

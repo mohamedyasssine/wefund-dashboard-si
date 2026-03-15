@@ -60,6 +60,10 @@ export default function KpiDashboard() {
     status: 'idle',
   })
 
+  const [retryCount, setRetryCount] = useState(0)
+
+  const handleRetry = () => setRetryCount((n) => n + 1)
+
   useEffect(() => {
     let cancelled = false
     setMetadataError(null)
@@ -74,7 +78,7 @@ export default function KpiDashboard() {
     return () => {
       cancelled = true
     }
-  }, [service])
+  }, [service, retryCount])
 
   useEffect(() => {
     let cancelled = false
@@ -102,7 +106,7 @@ export default function KpiDashboard() {
     return () => {
       cancelled = true
     }
-  }, [viewState, service])
+  }, [viewState, service, retryCount])
 
   const handlePeriodChange = (nextPeriod: Period) => {
     setViewState((current) =>
@@ -163,6 +167,13 @@ export default function KpiDashboard() {
           <p className="kpi-dashboard__error-code">
             Code : {dataState.error.code}
           </p>
+          <button
+            type="button"
+            className="kpi-dashboard__retry-button"
+            onClick={handleRetry}
+          >
+            Réessayer
+          </button>
         </div>
       )
     }
@@ -269,6 +280,13 @@ export default function KpiDashboard() {
               <p className="kpi-dashboard__error-code">
                 Code : {metadataError.code}
               </p>
+              <button
+                type="button"
+                className="kpi-dashboard__retry-button"
+                onClick={handleRetry}
+              >
+                Réessayer
+              </button>
             </div>
           ) : metadata ? (
             <KpiSelector
