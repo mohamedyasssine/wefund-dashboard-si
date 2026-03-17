@@ -470,3 +470,114 @@ body {
   outline: 2px solid var(--color-border-focus);
   outline-offset: 2px;
 }
+
+/* ======================================================================
+   Responsive — Tablette (≤ 1024px)
+   ====================================================================== */
+@media (max-width: 1024px) {
+  /* Grille principale : passe en une seule colonne */
+  .kpi-dashboard__content {
+    grid-template-columns: 1fr;
+  }
+
+  /* Graphique : hauteur minimale réduite */
+  .kpi-dashboard__chart {
+    min-height: 220px;
+  }
+}
+
+/* ======================================================================
+   Responsive — Mobile (≤ 640px)
+   ====================================================================== */
+@media (max-width: 640px) {
+  /* --- Layout global ------------------------------------------------- */
+  .layout main {
+    padding: var(--space-4);
+  }
+
+  /* --- Header -------------------------------------------------------- */
+  .header {
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .header__title {
+    font-size: var(--text-xl);
+  }
+
+  .header__subtitle {
+    font-size: var(--text-xs);
+  }
+
+  /* --- Section de page ----------------------------------------------- */
+  .page-section {
+    padding: var(--space-4);
+    border-radius: var(--radius-md);
+  }
+
+  .page-section__title {
+    font-size: var(--text-lg);
+  }
+
+  .page-section__desc {
+    font-size: var(--text-sm);
+  }
+
+  /* --- Dashboard header : empile titre + sélecteur de période ------- */
+  .kpi-dashboard__header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  /* --- Grille dashboard : colonne unique, espacement réduit --------- */
+  .kpi-dashboard__content {
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+  }
+
+  .kpi-dashboard__summary {
+    gap: var(--space-4);
+  }
+
+  /* --- Graphique : hauteur minimale réduite ------------------------- */
+  .kpi-dashboard__chart {
+    min-height: 200px;
+  }
+
+  /* --- Sélecteur de période : wrap sur petits écrans ---------------- */
+  .period-selector {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--space-1);
+    border-radius: var(--radius-lg);
+  }
+
+  .period-selector__button {
+    padding: var(--space-2);
+    font-size: var(--text-xs);
+  }
+
+  /* --- Carte KPI : valeur plus petite ------------------------------- */
+  .kpi-card {
+    padding: var(--space-4);
+  }
+
+  .kpi-card__value {
+    font-size: var(--text-2xl);
+  }
+
+  /* --- Graphiques : padding réduit ---------------------------------- */
+  .kpi-chart {
+    padding: var(--space-3);
+  }
+
+  .kpi-chart--empty {
+    min-height: 150px;
+  }
+
+  /* --- Bloc d'erreur : padding réduit ------------------------------- */
+  .kpi-dashboard__error {
+    padding: var(--space-4);
+  }
+}
