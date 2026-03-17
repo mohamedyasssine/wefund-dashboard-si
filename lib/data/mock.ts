@@ -1,15 +1,12 @@
+import type { Campaign, CampaignStatus, Contribution, Project } from '@/domain/entities'
 import type {
   AggregatedStats,
-  Campaign,
-  CampaignStatus,
-  Contribution,
   KpiId,
   KpiMetadata,
   Period,
-  Project,
   TimeSeriesDataPoint,
-} from '@/types'
-import type { KpiData } from '@/types/kpi'
+  KpiData,
+} from '@/domain/kpi'
 import { formatDateForChart, getPeriodStartDate } from '@/lib/utils/date'
 
 const random = (min: number, max: number) =>

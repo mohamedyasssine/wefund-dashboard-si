@@ -1,14 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import type { KpiId, KpiMetadata, Period } from '@/types'
-import type {
-  KpiChartConfig,
-  KpiDashboardDataState,
-  KpiData,
-} from '@/types/kpi'
+import type { KpiId, KpiMetadata, Period, KpiData } from '@/domain/kpi'
+import type { KpiChartConfig, KpiDashboardDataState, KpiLoadError } from '@/types/kpi'
 import { isLoaded, toKpiLoadError } from '@/types/kpi'
-import type { KpiLoadError } from '@/types/kpi'
 import { useKpiDataService } from '@/context/KpiDataServiceContext'
 import {
   AVAILABLE_PERIODS,

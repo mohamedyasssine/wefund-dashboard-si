@@ -1,4 +1,4 @@
-import type { KpiId, KpiMetadata } from '@/types'
+import type { KpiId, KpiMetadata } from '@/domain/kpi'
 
 type KpiSelectorProps = {
   kpis: KpiMetadata[]

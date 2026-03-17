@@ -12,8 +12,7 @@
 
 import { describe, it, expect } from 'vitest'
 import { getKpiData, computeAggregatedStats, KPI_METADATA } from '@/lib/data/mock'
-import type { KpiId, Period } from '@/types'
-import type { KpiData } from '@/types/kpi'
+import type { KpiId, Period, KpiData } from '@/domain/kpi'
 
 /* ================================================================
  * getKpiData — structure et contrat de retour

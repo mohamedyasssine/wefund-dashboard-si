@@ -2,7 +2,7 @@
  * Utilitaires pour la manipulation des dates
  */
 
-import type { Period } from '@/types'
+import type { Period } from '@/domain/kpi'
 
 /**
  * Calcule la date de début d'une période

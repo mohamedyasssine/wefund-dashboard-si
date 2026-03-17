@@ -1,4 +1,4 @@
-import type { Period } from '@/types'
+import type { Period } from '@/domain/kpi'
 
 const PERIOD_LABELS: Record<Period, string> = {
   day: 'Jour',

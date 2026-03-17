@@ -2,7 +2,7 @@
  * Constantes typées pour le dashboard (évite les chaînes magiques)
  */
 
-import type { KpiId, Period } from '@/types'
+import type { KpiId, Period } from '@/domain/kpi'
 
 /** Périodes proposées dans le sélecteur (type Period[], pas de string arbitraire) */
 export const AVAILABLE_PERIODS: readonly Period[] = [

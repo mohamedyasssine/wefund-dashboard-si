@@ -1,4 +1,4 @@
-import type { TimeSeriesDataPoint } from '@/types'
+import type { TimeSeriesDataPoint } from '@/domain/kpi'
 import type { KpiChartConfig } from '@/types/kpi'
 import {
   CartesianGrid,

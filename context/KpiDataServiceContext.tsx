@@ -6,7 +6,7 @@ import {
   useMemo,
   type ReactNode,
 } from 'react'
-import type { KpiDataService } from '@/lib/ports/kpiDataService'
+import type { KpiDataService } from '@/domain/ports/KpiDataService'
 import { mockKpiDataAdapter } from '@/lib/adapters/mockKpiDataAdapter'
 
 const KpiDataServiceContext = createContext<KpiDataService | null>(null)
