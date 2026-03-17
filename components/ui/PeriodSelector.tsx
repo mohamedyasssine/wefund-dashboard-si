@@ -38,6 +38,7 @@ export default function PeriodSelector({
     <div className="period-selector" role="radiogroup" aria-label={ariaLabel}>
       {periods.map((period) => {
         const isActive = period === value
+        const label = PERIOD_LABELS[period]
 
         return (
           <button
@@ -51,8 +52,9 @@ export default function PeriodSelector({
             onClick={() => onChange(period)}
             role="radio"
             aria-checked={isActive}
+            aria-label={`Période : ${label}`}
           >
-            {PERIOD_LABELS[period]}
+            {label}
           </button>
         )
       })}

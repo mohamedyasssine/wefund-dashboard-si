@@ -29,7 +29,7 @@ export default function LineKpiChart({
 }: LineKpiChartProps) {
   if (data.length === 0) {
     return (
-      <div className="kpi-chart kpi-chart--empty" aria-label={ariaLabel}>
+      <div className="kpi-chart kpi-chart--empty" role="img" aria-label={ariaLabel ?? 'Graphique vide'}>
         <p className="kpi-chart__empty-message">{emptyMessage}</p>
       </div>
     )
@@ -39,7 +39,7 @@ export default function LineKpiChart({
   const showGrid = config?.showGrid ?? true
 
   return (
-    <div className="kpi-chart" aria-label={ariaLabel}>
+    <div className="kpi-chart" role="img" aria-label={ariaLabel ?? 'Graphique en courbe'}>
       <ResponsiveContainer width="100%" height={height}>
         <LineChart
           data={data}

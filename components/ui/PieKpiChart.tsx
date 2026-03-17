@@ -46,14 +46,14 @@ export default function PieKpiChart({
 }: PieKpiChartProps) {
   if (data.length === 0) {
     return (
-      <div className="kpi-chart kpi-chart--empty" aria-label={ariaLabel}>
+      <div className="kpi-chart kpi-chart--empty" role="img" aria-label={ariaLabel ?? 'Graphique vide'}>
         <p className="kpi-chart__empty-message">{emptyMessage}</p>
       </div>
     )
   }
 
   return (
-    <div className="kpi-chart" aria-label={ariaLabel}>
+    <div className="kpi-chart" role="img" aria-label={ariaLabel ?? 'Graphique circulaire'}>
       <ResponsiveContainer width="100%" height={height}>
         <PieChart>
           <Tooltip

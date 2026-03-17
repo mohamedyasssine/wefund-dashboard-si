@@ -156,6 +156,8 @@ export default function KpiDashboard() {
     }).format(value)
   }
 
+  const isLoading = dataState.status === 'loading'
+
   const renderChart = () => {
     if (dataState.status === 'error') {
       return (
@@ -165,7 +167,7 @@ export default function KpiDashboard() {
             {dataState.error.message}
           </p>
           <p className="kpi-dashboard__error-code">
-            Code : {dataState.error.code}
+            Code&nbsp;: {dataState.error.code}
           </p>
           <button
             type="button"
@@ -180,10 +182,14 @@ export default function KpiDashboard() {
 
     if (!isLoaded(dataState)) {
       return (
-        <div className="kpi-dashboard__chart-placeholder">
+        <div
+          className="kpi-dashboard__chart-placeholder"
+          role="status"
+          aria-live="polite"
+        >
           <p className="kpi-dashboard__chart-placeholder-text">
             {dataState.status === 'loading'
-              ? 'Chargement des données...'
+              ? 'Chargement des données…'
               : 'Sélectionnez un indicateur pour afficher le graphique.'}
           </p>
         </div>
@@ -253,7 +259,10 @@ export default function KpiDashboard() {
   }
 
   return (
-    <section className="page-section kpi-dashboard">
+    <section
+      className="page-section kpi-dashboard"
+      aria-label="Tableau de bord des indicateurs de performance"
+    >
       <header className="kpi-dashboard__header">
         <div>
           <h2 className="page-section__title">Indicateurs de performance</h2>
@@ -265,7 +274,7 @@ export default function KpiDashboard() {
         <PeriodSelector
           value={viewState.period}
           onChange={handlePeriodChange}
-          aria-label="Sélection de la période"
+          aria-label="Sélection de la période d'affichage"
           availablePeriods={[...AVAILABLE_PERIODS]}
         />
       </header>
@@ -278,7 +287,7 @@ export default function KpiDashboard() {
                 {metadataError.message}
               </p>
               <p className="kpi-dashboard__error-code">
-                Code : {metadataError.code}
+                Code&nbsp;: {metadataError.code}
               </p>
               <button
                 type="button"
@@ -295,7 +304,7 @@ export default function KpiDashboard() {
               onSelect={handleKpiSelect}
             />
           ) : (
-            <p className="kpi-dashboard__loading">
+            <p className="kpi-dashboard__loading" role="status" aria-live="polite">
               Chargement des indicateurs…
             </p>
           )}
@@ -311,7 +320,16 @@ export default function KpiDashboard() {
           />
         </div>
 
-        <div className="kpi-dashboard__chart">{renderChart()}</div>
+        {/* Zone live : les technologies d'assistance annoncent les changements */}
+        <div
+          className="kpi-dashboard__chart"
+          role="region"
+          aria-label="Graphique de l'indicateur sélectionné"
+          aria-live="polite"
+          aria-busy={isLoading}
+        >
+          {renderChart()}
+        </div>
       </div>
     </section>
   )

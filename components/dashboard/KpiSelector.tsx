@@ -11,17 +11,26 @@ export default function KpiSelector({
   selectedId,
   onSelect,
 }: KpiSelectorProps) {
+  const selectedDescription = kpis.find((kpi) => kpi.id === selectedId)?.description
+
   return (
-    <div className="kpi-selector">
-      <label className="kpi-selector__label" htmlFor="kpi-selector">
+    <div className="kpi-selector" role="group" aria-labelledby="kpi-selector-label">
+      <label
+        className="kpi-selector__label"
+        htmlFor="kpi-selector"
+        id="kpi-selector-label"
+      >
         Indicateur
       </label>
+
+      {/* Le label visible (htmlFor) suffit à nommer le contrôle.
+          aria-describedby associe la description complémentaire au champ. */}
       <select
         id="kpi-selector"
         className="kpi-selector__select"
         value={selectedId}
         onChange={(e) => onSelect(e.target.value as KpiId)}
-        aria-label="Sélection d'indicateur de performance"
+        aria-describedby="kpi-selector-hint"
       >
         {kpis.map((kpi) => (
           <option key={kpi.id} value={kpi.id}>
@@ -30,8 +39,8 @@ export default function KpiSelector({
         ))}
       </select>
 
-      <p className="kpi-selector__hint">
-        {kpis.find((kpi) => kpi.id === selectedId)?.description}
+      <p className="kpi-selector__hint" id="kpi-selector-hint" aria-live="polite">
+        {selectedDescription}
       </p>
     </div>
   )

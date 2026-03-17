@@ -6,6 +6,12 @@ type KpiCardProps = {
   subtitle?: string
 }
 
+const TREND_SR_LABELS: Record<'up' | 'down' | 'neutral', string> = {
+  up: 'en hausse',
+  down: 'en baisse',
+  neutral: 'stable',
+}
+
 export default function KpiCard({
   title,
   value,
@@ -22,7 +28,10 @@ export default function KpiCard({
         : 'kpi-card__variation--neutral'
 
   return (
-    <article className="kpi-card">
+    <article
+      className="kpi-card"
+      aria-label={`${title} : ${value}${hasVariation ? `, ${TREND_SR_LABELS[trend]} de ${variation}` : ''}`}
+    >
       <header className="kpi-card__header">
         <h3 className="kpi-card__title">{title}</h3>
       </header>
@@ -38,6 +47,8 @@ export default function KpiCard({
             >
               {trend === 'up' ? '▲' : trend === 'down' ? '▼' : '◆'}
             </span>
+            {/* Texte accessible pour les lecteurs d'écran */}
+            <span className="sr-only">{TREND_SR_LABELS[trend]} de</span>
             <span className="kpi-card__variation-text">{variation}</span>
           </p>
         )}
