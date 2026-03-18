@@ -354,9 +354,11 @@ export function getKpiData(kpiId: KpiId, period: Period): KpiData {
 
     case 'avg-duration': {
       const stats = computeAggregatedStats()
-      const count = 2
-      value =
-        (stats.averageSuccessDuration + stats.averageFailureDuration) / count
+      const totalDuration =
+        stats.averageSuccessDuration * stats.successfulCampaigns +
+        stats.averageFailureDuration * stats.failedCampaigns
+      const totalCampaigns = stats.successfulCampaigns + stats.failedCampaigns
+      value = totalCampaigns > 0 ? totalDuration / totalCampaigns : 0
       break
     }
 
