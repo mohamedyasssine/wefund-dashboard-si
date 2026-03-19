@@ -1,88 +1,234 @@
 # WeFund Dashboard SI
 
-Dashboard de suivi pour la plateforme de financement participatif WeFund.
+Dashboard de suivi pour la plateforme de crowdfunding WeFund.
 
 ## Description
 
-Cette application fournit des graphiques de suivi à la DSI pour analyser les performances de la plateforme de crowdfunding.
+Application de monitoring des KPIs pour les équipes DSI/recette. Affiche 9 indicateurs clés (collecté, remboursé, taux succès, etc.) avec graphiques et sélecteurs de période.
 
-## Indicateurs disponibles
+## Les 9 KPIs
 
-- Nombre de campagnes actives sur une période donnée
-- Montant collecté au total sur une période donnée
-- Taux de succès global
-- Nombre de contributions total sur une période donnée
-- Nombre moyen de contributions par campagne
-- Durée moyenne avant succès/échec
-- Montant moyen par contribution
-- Taux d'atteinte moyen des objectifs (collecté / objectif cible)
-- Volume remboursé total sur une période
+1. Total collecté (€)
+2. Total remboursé (€)
+3. Durée moyenne (jours)
+4. Taux de succès (%)
+5. Montant moyen par contribution (€)
+6. Taux de remboursement (%)
+7. Total contributeurs (nombre)
+8. Campagnes actives (nombre)
+9. Projets (nombre)
 
-## Technologies
+**Voir** `documentation/KPI.md` pour formules et détails.
 
-- **Framework**: Next.js 14
-- **Langage**: TypeScript
-- **Graphiques**: Recharts
-- **Node.js**: Version 24+
+---
 
-## Pourquoi Next.js ?
+## Stack technique
 
-Next.js a été choisi plutôt que React pur pour les raisons suivantes :
+- **Framework :** Next.js 14 + React 18.3
+- **Langage :** TypeScript 5.5
+- **Graphiques :** Recharts 2.12
+- **Tests :** Vitest 4.1 + Testing Library
+- **Node.js :** v24+
 
-### Déploiement simplifié
-Le cahier des charges exige une URL déployée pour la recette du client. Next.js se déploie facilement sur Render.com (offre free) ou Vercel sans configuration complexe. Le framework est optimisé pour la production dès le départ.
+---
 
-### Routing intégré
-L'App Router permet d'organiser les pages du dashboard de manière claire. Pas besoin d'installer React Router séparément, la structure de fichiers est standardisée.
+## Installation & lancement
 
-### Performance
-Next.js propose des optimisations automatiques (code splitting, lazy loading) qui sont importantes pour un dashboard avec plusieurs graphiques simultanés. Cela améliore l'expérience utilisateur avec des chargements plus rapides.
+**Prérequis :** Node.js v24+
 
-### Évolutivité
-Les API Routes intégrées permettront de connecter facilement les microservices plus tard. L'architecture est prête pour intégrer les services de gestion de projets et contributions. Le support natif du SSR/SSG est disponible si nécessaire.
+```bash
+# Installer
+npm install
 
-### Configuration minimale
-Le support TypeScript est natif et optimisé. Moins de configuration manuelle est nécessaire, ce qui permet de se concentrer sur le développement.
+# Dev
+npm run dev
+# → http://localhost:3000
 
-### Alignement avec le cahier des charges
-Le cahier des charges mentionne la possibilité d'utiliser NextJS. C'est un framework moderne et largement adopté dans l'écosystème React, ce qui garantit une meilleure maintenabilité à long terme.
+# Build production
+npm run build
+npm start
 
-## Exécution du projet
+# Tests
+npm test
+```
 
-**Prérequis :** Node.js en version 24 ou supérieure ([télécharger sur nodejs.org](https://nodejs.org))
+---
 
-**Lancer le projet en local :**
+## Architecture
 
-1. Ouvrir un terminal dans le dossier du projet (par exemple `wefund-dashboard-si`).
+### Port/Adapter (Hexagonal)
 
-2. Installer les dépendances (à faire une fois après un clone) :
-   ```bash
-   npm install
-   ```
+L'application suit le pattern hexagonal pour découpler la UI des données :
 
-3. Démarrer le serveur de développement :
-   ```bash
-   npm run dev
-   ```
+```
+Domaine (métier, sans dépendances)
+  ├── domain/entities.ts → Entités (Project, Campaign, User, Contribution)
+  ├── domain/kpi.ts → Types KPI
+  └── domain/ports/KpiDataService.ts → Interface du service
+       ↑
+       │ implémente
+       │
+Adaptateurs (infrastructure)
+  └── lib/adapters/mockKpiDataAdapter.ts → Implémentation mock
 
-4. Ouvrir l’application dans le navigateur à l’adresse : **http://localhost:3000**
+UI (composants React)
+  └── components/ → Dépend du port, pas de l'implémentation
+```
 
-L’application se recharge automatiquement lorsque vous modifiez le code.
+**Avantages :**
+- Swap facile : mock → API sans toucher la UI
+- Tests simples : injecter des mocks en 2 lignes
+- Maintenabilité : domaine isolé des changements externes
 
-**Build pour la production :**
+### Dossiers clés
+
+| Dossier | Rôle |
+|---------|------|
+| `domain/` | Entités métier, port `KpiDataService` |
+| `lib/adapters/` | `mockKpiDataAdapter` implémente le port |
+| `lib/data/mock.ts` | Données mock + formules KPI |
+| `components/` | Composants React (KpiDashboard, KpiCard, Charts) |
+| `context/` | `KpiDataServiceProvider` + hook `useKpiDataService` |
+| `documentation/` | `doc-architecture.md`, `doc-typage.md`, `KPI.md` |
+| `__tests__/` | 110 tests validant formules & composants |
+
+---
+
+## Composants UI
+
+### KpiDashboard
+Composant principal. Affiche grille de cartes KPI avec sélecteurs.
+
+### KpiCard
+Affiche un KPI : titre, valeur, graphique, sous-titre.
+
+### KpiSelector
+Dropdown pour choisir l'indicateur à afficher.
+
+### PeriodSelector
+Radio buttons pour période (jour, semaine, mois, année, tout).
+
+### Charts
+- `LineKpiChart` — courbes (collecté, remboursé, refundrate)
+- `BarKpiChart` — barres (succès, contributeurs, durée)
+- `PieKpiChart` — pie (taux succès)
+
+---
+
+## Injection de dépendances
+
+Le service KPI est fourni via **React Context**. Cela permet de swapper l'implémentation sans recompiler la UI.
+
+**Actuel (mock) :**
+```typescript
+// app/layout.tsx
+<KpiDataServiceProvider service={mockKpiDataAdapter}>
+  <KpiDashboard />
+</KpiDataServiceProvider>
+```
+
+**Futur (API) :**
+```typescript
+// app/layout.tsx
+<KpiDataServiceProvider service={apiKpiDataAdapter}>
+  <KpiDashboard />
+</KpiDataServiceProvider>
+```
+
+### Hook d'utilisation
+```typescript
+const service = useKpiDataService()
+const data = await service.getKpiData('total-collected', 'month')
+```
+
+---
+
+## Tests
+
+**110 tests** validant formules, composants et service :
+
+| Suite | Nb tests | Couverture |
+|-------|----------|-----------|
+| `weighted-avg-duration` | 8 | Moyenne pondérée (durée moyenne) |
+| `data-aggregation-edge-cases` | 12 | Formules & cas limites |
+| `components.rendering` | 11 | Rendu composants |
+| `components.smoke` | 5 | Tests simples |
+| `components.kpi-card` | 7 | KpiCard avec props |
+| `kpi-data-service-adapter` | 5 | Service & injection |
+| `kpi-data-service` (existant) | 41 | Contrat données KPI |
+| `utils` (existant) | 21 | Formatage dates/devises |
+
+**Lancer :**
+```bash
+npm test              # Interactive
+npm test -- --run    # Une fois
+```
+
+---
+
+## Données de test
+
+Mock dataset dans `lib/data/mock.ts` :
+- 10 projets
+- 35+ campagnes
+- 500+ contributions (€500–€50k)
+- 200+ contributeurs
+- Dates : personnalisables par test
+
+**Formules testées :**
+- ✓ Moyenne pondérée (durée)
+- ✓ Taux succès
+- ✓ Agrégation multi-période
+- ✓ Contrainte remboursé ≤ collecté
+
+---
+
+## Intégration API (futur)
+
+Quand les microservices seront disponibles :
+
+1. Créer `lib/adapters/apiKpiDataAdapter.ts` implémentant `KpiDataService`
+2. Remplacer `mockKpiDataAdapter` par `apiKpiDataAdapter` dans `app/layout.tsx`
+3. Tests restent identiques (interface ne change pas)
+
+**Exemple :**
+```typescript
+// lib/adapters/apiKpiDataAdapter.ts
+export const apiKpiDataAdapter: KpiDataService = {
+  async getKpiData(kpiId, period) {
+    const res = await fetch(`/api/kpis/${kpiId}?period=${period}`)
+    return res.json()
+  },
+  async getKpiMetadata() {
+    const res = await fetch('/api/kpis/metadata')
+    return res.json()
+  }
+}
+```
+
+---
+
+## Documentation
+
+- **[doc-architecture.md](documentation/doc-architecture.md)** — Pattern hexagonal, découpage couches
+- **[doc-typage.md](documentation/doc-typage.md)** — Types métier, AsyncResult, gardes
+- **[KPI.md](documentation/KPI.md)** — Formules exactes, cas limites, implémentation
+
+---
+
+## Déploiement
+
+Prêt pour Render.com, Vercel, ou tout serveur Node.js 24+.
+
 ```bash
 npm run build
 npm start
 ```
-Puis ouvrir http://localhost:3000 (le port peut varier selon la config).
 
-## Structure du projet
+Environment : `NODE_ENV=production`
 
-```
-wefund-dashboard-si/
-├── app/                    # Pages Next.js (App Router)
-├── components/             # Composants Next.js réutilisables
-├── lib/                    # Utilitaires et services
-├── types/                  # Définitions TypeScript
-└── public/                 # Assets statiques
-```
+---
+
+**Créé :** Janv 2025  
+**Status :** POC complet, prêt pour recette  
+**Tests :** 110/110 ✓
