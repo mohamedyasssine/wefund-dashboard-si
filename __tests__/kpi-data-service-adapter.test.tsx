@@ -76,6 +76,27 @@ function Consumer() {
   )
 }
 
+class ErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean; message: string }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props)
+    this.state = { hasError: false, message: '' }
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    return { hasError: true, message: error.message }
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <div data-testid="hook-error">{this.state.message}</div>
+    }
+    return this.props.children
+  }
+}
+
 describe('KpiDataServiceContext', () => {
   it('injecte le service fourni via KpiDataServiceProvider', () => {
     const customService: KpiDataService = {
@@ -107,12 +128,14 @@ describe('KpiDataServiceContext', () => {
   })
 
   it('useKpiDataService lance une erreur hors provider', () => {
-    const spy = vi.spyOn(console, 'error').mockImplementation(() => {})
-
-    expect(() => render(<Consumer />)).toThrow(
-      'useKpiDataService doit être utilisé dans un KpiDataServiceProvider',
+    render(
+      <ErrorBoundary>
+        <Consumer />
+      </ErrorBoundary>,
     )
 
-    spy.mockRestore()
+    expect(screen.getByTestId('hook-error')).toHaveTextContent(
+      'useKpiDataService doit être utilisé dans un KpiDataServiceProvider',
+    )
   })
 })
