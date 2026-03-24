@@ -1,10 +1,11 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { KpiId, KpiMetadata, Period, KpiData } from '@/domain/kpi'
 import type { KpiChartConfig, KpiDashboardDataState, KpiLoadError } from '@/types/kpi'
 import { isLoaded, toKpiLoadError } from '@/types/kpi'
 import { useKpiDataService } from '@/context/KpiDataServiceContext'
+import { createKpiDashboardUseCases } from '@/lib/application/kpiDashboardUseCases'
 import {
   AVAILABLE_PERIODS,
   DEFAULT_KPI_ID,
@@ -43,6 +44,7 @@ function getChartConfig(kpiId: KpiId, metadataList: KpiMetadata[]): KpiChartConf
 
 export default function KpiDashboard() {
   const service = useKpiDataService()
+  const useCases = useMemo(() => createKpiDashboardUseCases(service), [service])
 
   const [metadata, setMetadata] = useState<KpiMetadata[] | null>(null)
   const [metadataError, setMetadataError] = useState<KpiLoadError | null>(null)
@@ -62,8 +64,8 @@ export default function KpiDashboard() {
   useEffect(() => {
     let cancelled = false
     setMetadataError(null)
-    service
-      .getKpiMetadata()
+    useCases
+      .loadMetadata()
       .then((list) => {
         if (!cancelled) setMetadata(list)
       })
@@ -73,7 +75,7 @@ export default function KpiDashboard() {
     return () => {
       cancelled = true
     }
-  }, [service, retryCount])
+  }, [useCases, retryCount])
 
   useEffect(() => {
     let cancelled = false
@@ -82,26 +84,18 @@ export default function KpiDashboard() {
 
     setDataState({ status: 'loading' })
 
-    service
-      .getKpiData(selectedKpiId, period)
+    useCases
+      .loadKpiData({ kpiId: selectedKpiId, period })
       .then((data) => {
         if (cancelled) return
 
-        setDataState({ status: 'loaded', data })
-      })
-      .catch((err: unknown) => {
-        if (cancelled) return
-
-        setDataState({
-          status: 'error',
-          error: toKpiLoadError(err),
-        })
+        setDataState(data)
       })
 
     return () => {
       cancelled = true
     }
-  }, [viewState, service, retryCount])
+  }, [viewState, useCases, retryCount])
 
   const handlePeriodChange = (nextPeriod: Period) => {
     setViewState((current) =>
