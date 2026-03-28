@@ -101,6 +101,39 @@ describe('PeriodSelector', () => {
     expect(radios[0]).toHaveAttribute('aria-checked', 'false')
     expect(radios[1]).toHaveAttribute('aria-checked', 'true')
   })
+
+  it('avertit en console si la valeur courante est absente des périodes proposées', () => {
+    const onChange = vi.fn()
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {})
+
+    render(
+      <PeriodSelector
+        value="month"
+        onChange={onChange}
+        availablePeriods={['week', 'day']}
+      />,
+    )
+
+    expect(warn).toHaveBeenCalledWith(
+      expect.stringContaining('[PeriodSelector] valeur inconnue "month"'),
+    )
+
+    warn.mockRestore()
+  })
+
+  it('sans availablePeriods, expose toutes les périodes avec libellés connus', () => {
+    const onChange = vi.fn()
+    render(
+      <PeriodSelector value="all" onChange={onChange} aria-label="Période" />,
+    )
+
+    expect(screen.getByRole('radiogroup', { name: 'Période' })).toBeInTheDocument()
+    expect(screen.getByRole('radio', { name: 'Période : Tout' })).toHaveAttribute(
+      'aria-checked',
+      'true',
+    )
+    expect(screen.getByRole('radio', { name: 'Période : Jour' })).toBeInTheDocument()
+  })
 })
 
 describe('KpiSelector', () => {

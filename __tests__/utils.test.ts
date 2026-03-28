@@ -5,8 +5,13 @@
  * par la couche de données KPI.
  */
 
-import { describe, it, expect } from 'vitest'
-import { getPeriodStartDate } from '@/lib/utils/date'
+import { describe, it, expect, vi, afterEach } from 'vitest'
+import type { Period } from '@/domain/kpi'
+import {
+  getPeriodStartDate,
+  formatDate,
+  formatDateForChart,
+} from '@/lib/utils/date'
 import {
   formatCurrency,
   formatPercentage,
@@ -80,6 +85,41 @@ describe('getPeriodStartDate — borne de début de période', () => {
       expect(start.getTime()).toBeLessThanOrEqual(now.getTime())
     }
   })
+
+  it('période inconnue : fallback proche de « maintenant » (branche default)', () => {
+    const before = Date.now()
+    const start = getPeriodStartDate('invalid' as Period)
+    const after = Date.now()
+
+    expect(start.getTime()).toBeGreaterThanOrEqual(before - 1_000)
+    expect(start.getTime()).toBeLessThanOrEqual(after + 1_000)
+  })
+})
+
+describe('formatDate — affichage long', () => {
+  afterEach(() => {
+    vi.useRealTimers()
+  })
+
+  it('formate une date fixe de façon stable (locale fr-FR)', () => {
+    vi.useFakeTimers()
+    vi.setSystemTime(new Date('2024-06-15T12:00:00.000Z'))
+    const s = formatDate(new Date('2020-01-01T00:00:00.000Z'))
+    expect(s).toMatch(/2020/)
+    expect(s.length).toBeGreaterThan(5)
+  })
+
+  it('accepte fin d’année / epoch', () => {
+    expect(formatDate(new Date(0))).toMatch(/1970/)
+  })
+})
+
+describe('formatDateForChart — axe graphique', () => {
+  it('produit une chaîne courte non vide', () => {
+    const s = formatDateForChart(new Date('2024-03-01T12:00:00.000Z'))
+    expect(s.length).toBeGreaterThan(0)
+    expect(s).not.toContain('2024')
+  })
 })
 
 /* ================================================================
@@ -108,6 +148,12 @@ describe('formatCurrency — formatage monétaire', () => {
     expect(result).toContain('42')
     expect(result).toContain('€')
   })
+
+  it('formate un montant négatif', () => {
+    const result = formatCurrency(-10)
+    expect(result).toContain('€')
+    expect(result).toMatch(/10/)
+  })
 })
 
 /* ================================================================
@@ -130,6 +176,14 @@ describe('formatPercentage — formatage en pourcentage', () => {
   it('respecte le nombre de décimales demandé', () => {
     expect(formatPercentage(33.333, 2)).toBe('33.33%')
   })
+
+  it('gère 0 décimales', () => {
+    expect(formatPercentage(50, 0)).toBe('50%')
+  })
+
+  it('gère une valeur négative', () => {
+    expect(formatPercentage(-0.5, 1)).toBe('-0.5%')
+  })
 })
 
 /* ================================================================
@@ -146,6 +200,15 @@ describe('formatNumber — formatage numérique', () => {
   it('formate zéro', () => {
     expect(formatNumber(0)).toBe('0')
   })
+
+  it('formate un grand entier avec séparateurs', () => {
+    expect(formatNumber(1_000_000)).toMatch(/1/)
+    expect(formatNumber(1_000_000)).toMatch(/000/)
+  })
+
+  it('formate un nombre négatif', () => {
+    expect(formatNumber(-42)).toMatch(/42/)
+  })
 })
 
 /* ================================================================
@@ -153,6 +216,10 @@ describe('formatNumber — formatage numérique', () => {
  * ================================================================ */
 
 describe('formatDuration — formatage de durées', () => {
+  it('affiche « 0 jour » pour zéro (singulier)', () => {
+    expect(formatDuration(0)).toBe('0 jour')
+  })
+
   it('affiche « 1 jour » pour 1 jour', () => {
     expect(formatDuration(1)).toBe('1 jour')
   })
@@ -161,15 +228,39 @@ describe('formatDuration — formatage de durées', () => {
     expect(formatDuration(3)).toBe('3 jours')
   })
 
+  it('frontière 6 j : encore des jours', () => {
+    expect(formatDuration(6)).toBe('6 jours')
+  })
+
+  it('frontière 7 j : bascule en semaines', () => {
+    expect(formatDuration(7)).toBe('1 semaine')
+  })
+
   it('affiche en semaines pour 7-29 jours', () => {
     expect(formatDuration(14)).toContain('semaine')
+  })
+
+  it('frontière 29 j : encore des semaines', () => {
+    expect(formatDuration(29)).toMatch(/semaine/)
+  })
+
+  it('frontière 30 j : bascule en mois', () => {
+    expect(formatDuration(30)).toBe('1 mois')
   })
 
   it('affiche en mois pour 30-364 jours', () => {
     expect(formatDuration(60)).toContain('mois')
   })
 
+  it('frontière 364 j : encore des mois', () => {
+    expect(formatDuration(364)).toContain('mois')
+  })
+
+  it('frontière 365 j : bascule en années', () => {
+    expect(formatDuration(365)).toBe('1 an')
+  })
+
   it('affiche en années pour 365+ jours', () => {
-    expect(formatDuration(730)).toContain('an')
+    expect(formatDuration(730)).toBe('2 ans')
   })
 })
