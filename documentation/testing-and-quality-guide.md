@@ -27,7 +27,7 @@ npm run type-check
 ### 1) Demarrer SonarQube local
 
 ```bash
-docker run -d --name sonarqube-local -p 9000:9000 sonarqube:lts-community
+docker run -d --name sonarqube-local -p 9000:9000 sonarqube:community
 ```
 
 Interface: `http://localhost:9000`
